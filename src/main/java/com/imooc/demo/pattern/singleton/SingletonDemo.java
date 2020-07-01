@@ -6,10 +6,24 @@ import java.lang.reflect.InvocationTargetException;
 
 public class SingletonDemo {
     public static void main(String[] args) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
-        System.out.println(StarvingSingleton.getInstance());
-        Class clazz = StarvingSingleton.class;
+        System.out.println(EnumStarvingSingleton.getInstance());
+        Class clazz = EnumStarvingSingleton.class;
         Constructor constructor = clazz.getDeclaredConstructor();
         constructor.setAccessible(true);
-        System.out.println(constructor.newInstance());
+        EnumStarvingSingleton enumStarvingSingleton = (EnumStarvingSingleton)constructor.newInstance();
+        System.out.println(enumStarvingSingleton.getInstance());
+
+//        System.out.println(StarvingSingleton.getInstance());
+//        Class clazz = StarvingSingleton.class;
+//        Constructor constructor = clazz.getDeclaredConstructor();
+//        constructor.setAccessible(true);
+//        StarvingSingleton starvingSingleton = (StarvingSingleton) constructor.newInstance();
+//        System.out.println(starvingSingleton.getInstance());
+
+//        System.out.println(StarvingSingleton.getInstance());
+//        Class clazz = StarvingSingleton.class;
+//        Constructor constructor = clazz.getDeclaredConstructor();
+//        constructor.setAccessible(true);
+//        System.out.println(constructor.newInstance());
     }
 }
