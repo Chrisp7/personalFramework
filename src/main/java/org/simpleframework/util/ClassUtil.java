@@ -19,7 +19,7 @@ public class ClassUtil {
         // 获取类加载器classloader
         ClassLoader classLoader = getClassLoader();
         // 根据getResource()方法获取加载的资源的url
-        URL url = classLoader.getResource(packageName.replace(".", "/"));
+        URL url = classLoader.getResource(packageName.replace(".", File.separator));
         if (url == null) {
             log.warn("unable to retrieve anything from package: " + packageName);
             return null;
@@ -39,6 +39,9 @@ public class ClassUtil {
      * @param packageName
      */
     private static void extractClassFile(Set<Class<?>> classSet, File fileSource, String packageName) {
+        if(fileSource.listFiles().length==0){
+            return;
+        }
         // 列出当前文件夹中的所有文件和文件夹
         File[] files = fileSource.listFiles(new FileFilter() {
             @Override
