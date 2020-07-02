@@ -4,6 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
@@ -21,7 +23,7 @@ public class ClassUtil {
         // 根据getResource()方法获取加载的资源的url
         URL url = classLoader.getResource(packageName.replace(".", File.separator));
         if (url == null) {
-            log.warn("unable to retrieve anything from package: " + packageName);
+            log.warn("unable to retrieve anything from package: ", packageName);
             return null;
         }
         Set<Class<?>> classSet = null;
@@ -39,7 +41,7 @@ public class ClassUtil {
      * @param packageName
      */
     private static void extractClassFile(Set<Class<?>> classSet, File fileSource, String packageName) {
-        if(fileSource.listFiles().length==0){
+        if (fileSource.listFiles().length == 0) {
             return;
         }
         // 列出当前文件夹中的所有文件和文件夹
@@ -93,12 +95,30 @@ public class ClassUtil {
         try {
             return Class.forName(className);
         } catch (ClassNotFoundException e) {
-            log.error("load class error" + e);
+            log.error("load class error", e);
             throw new RuntimeException(e);
         }
     }
 
-    public static void main(String[] args) {
-        extractPackageClass("com.imooc.entity");
+    /**
+     *
+     * @param clazz
+     * @param accessible 是否支持创建出私有class对象的实例
+     * @param <T>
+     * @return
+     */
+    public static <T> T newInstance(Class<?> clazz, boolean accessible) {
+        try {
+            Constructor constructor = clazz.getDeclaredConstructor();
+            constructor.setAccessible(accessible);
+            return (T) constructor.newInstance();
+        } catch (Exception e) {
+            log.error("newInstance error: ", e);
+            throw new RuntimeException(e);
+        }
     }
+
+//    public static void main(String[] args) {
+//        extractPackageClass("com.imooc.entity");
+//    }
 }
