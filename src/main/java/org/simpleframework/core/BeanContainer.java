@@ -11,11 +11,9 @@ import org.simpleframework.util.ClassUtil;
 import org.simpleframework.util.ValidationUtil;
 
 import java.lang.annotation.Annotation;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -70,5 +68,86 @@ public class BeanContainer {
         }
         loaded = true;
     }
+
+    /**
+     * 添加新的class对象和其对应的实例
+     *
+     * @param clazz
+     * @param obj
+     * @return
+     */
+    public Object addBean(Class<?> clazz, Object obj) {
+        return beanMap.put(clazz, obj);
+
+    }
+
+    /**
+     * 删除class对象
+     *
+     * @param clazz
+     * @return 返回被删除的bean实例，没有则为null
+     */
+    public Object removeBean(Class<?> clazz) {
+        return beanMap.remove(clazz);
+    }
+
+    /**
+     * 根据class对象获取实例
+     *
+     * @param clazz
+     * @return
+     */
+    public Object getBean(Class<?> clazz) {
+        return beanMap.get(clazz);
+    }
+
+    /**
+     * 获取所有的class对象
+     *
+     * @return 一个包含所有class对象的set
+     */
+    public Set<Class<?>> getClasses() {
+        return beanMap.keySet();
+    }
+
+    /**
+     * 获取所有的bean
+     *
+     * @return
+     */
+    public Set<Object> getBeans() {
+        return new HashSet<>(beanMap.values());
+    }
+
+    /**
+     * 返回被注解标记的所有class对象
+     * @param annotation
+     * @return
+     */
+    public Set<Class<?>> getClassesByAnnotation(Class<? extends Annotation> annotation) {
+        Set<Class<?>> classSet = getClasses();
+        if (classSet.isEmpty()) {
+            log.warn("nothing in the beanMap");
+            return null;
+        }
+        Set<Class<?>> res = classSet.stream().filter(e -> (e.isAnnotationPresent(annotation))).collect(Collectors.toSet());
+        return res.size() > 0 ? res : null;
+    }
+
+    /**
+     * 根据超类获取对应子类的class
+     * @param interfaceOrClass
+     * @return
+     */
+    public Set<Class<?>> getClassesBySuper(Class<?> interfaceOrClass) {
+        Set<Class<?>> classSet = getClasses();
+        if (classSet.isEmpty()) {
+            log.warn("nothing in the beanMap");
+            return null;
+        }
+        Set<Class<?>> res = classSet.stream().filter(e -> (interfaceOrClass.isAssignableFrom(e)&&!interfaceOrClass.equals(e))).collect(Collectors.toSet());
+        return res.size() > 0 ? res : null;
+    }
+
 
 }
