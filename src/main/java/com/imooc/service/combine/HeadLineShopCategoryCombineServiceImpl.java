@@ -7,11 +7,14 @@ import com.imooc.entity.dto.Result;
 import com.imooc.service.solo.HeadLineService;
 import com.imooc.service.solo.ShopCategoryService;
 import org.simpleframework.core.annotation.Service;
+import org.simpleframework.core.inject.annotation.Autowired;
 
 import java.util.List;
 @Service
 public class HeadLineShopCategoryCombineServiceImpl implements HeadLineShopCategoryCombineService {
+    @Autowired
     private HeadLineService headLineService;
+    @Autowired
     private ShopCategoryService shopCategoryService;
 
     @Override
